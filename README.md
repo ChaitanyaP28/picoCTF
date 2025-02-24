@@ -37,4 +37,20 @@ for _ in range(10):
 
 print("DONE")
 ```
+**Example:**
+
 ![](</Pictures/BinarySearch1.png>)
+
+
+## heap 0
+
+See the addresses: `0x5bd0e822e2b0` and `0x5bd0e822e2d0`. It is 32 byte gap So inputting a string of length > 32 characters will modify the bico and we gain access to the flag.
+
+```
+2
+```
+```
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHELLO
+```
+
+![](</Pictures/heap0.png>)
