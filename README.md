@@ -182,3 +182,24 @@ Now put the data in Base64 decoder
 
 
 
+# flags are stepic
+
+```
+curl http://standard-pizzas.picoctf.net:57324/
+```
+
+By asking AI which country doesnt exists gives us
+```
+Upanzi, Republic The
+```
+
+Download the png gives us a Very Large image of upz.png
+
+run
+```
+stepic -d -i upz.png
+```
+
+
+
+# 
