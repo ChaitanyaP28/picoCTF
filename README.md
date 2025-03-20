@@ -110,3 +110,57 @@ print("Big Endian:", big_endian)
 ```
 
 ![](</Pictures/endianness.png>)
+
+
+
+# CanYouSee
+
+Unzip the file
+
+```
+exiftool ukn_reality.jpg
+```
+![](Pictures/CanYouSee.png)
+
+The Text is clearly a Base 64 Cipher
+
+cGljb0NURntNRTc0RDQ3QV9ISUREM05fYjMyMDQwYjh9Cg==
+
+This gives the flag
+
+
+
+# Glory of the Garden
+
+```
+strings garden.jpg
+```
+
+
+
+# information
+
+```
+exiftool cat.jpg
+```
+![](Pictures/cat.png)
+
+cGljb0NURnt0aGVfbTN0YWRhdGFfMXNfbW9kaWZpZWR9
+
+It is Base 64
+
+
+
+# Secret of the Polyglot
+
+```
+foremost flag2of2-final.pdf
+```
+
+First part of flag in PNG image
+
+Second part of the flag in the PDF (Open PDF in Chrome)
+
+
+
+
