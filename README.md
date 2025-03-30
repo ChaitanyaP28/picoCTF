@@ -677,3 +677,42 @@ See function verify
 
 Write it in order, the order is like `checkpass.substring(<START> <END>)`
 
+
+
+## GET aHEAD
+
+```
+curl -I http://mercury.picoctf.net:47967/
+```
+
+
+
+## Scavenger Hunt
+
+Inspect the website:
+
+```
+wget -r http://mercury.picoctf.net:27278/
+```
+
+This gives 3 parts of the flag
+```
+cat *
+```
+
+For the fourth part, since it is an `apache server` Given in comments of the last file.
+
+```
+curl -s http://mercury.picoctf.net:27278/.htaccess
+```
+
+For the fifth part, It is given its done on Mac, so try
+```
+curl -s http://mercury.picoctf.net:27278/.DS_Store
+```
+
+This completes all five parts of the flag
+
+
+
+## 
