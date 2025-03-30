@@ -675,5 +675,5 @@ Inspect the page
 
 See function verify
 
-Write it in order, the order is like `checkpass.substring("<Start><END>")
+Write it in order, the order is like `checkpass.substring(`START` `END`)`
 
