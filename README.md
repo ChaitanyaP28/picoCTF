@@ -715,4 +715,51 @@ This completes all five parts of the flag
 
 
 
+## Cookie Monster Secret Recipe
+
+First Enter random username and password and click on login. Inspect and go to Applications Then cookies. You can see one cookie named secret_recipe: Ckick on `Show URL decoded`. Now this is BASE64 Encoding.
+
+
+
+## Cookies
+
+See the cookies, Each cookie value shows a different text. Use this bash code to search for pico
+
+```
+for i in {0..100}; do r=$(curl -s -L --cookie "name=$i" http://mercury.picoctf.net:64944/); echo "$r" | grep -q "pico" && echo "Found at name=$i: $r" && break; done
+```
+
+
+## Bookmarklet
+
+Opening the website shows the encoded flag with the function used to encode it. We just reverse the process.
+
+```
+encrypted = "àÒÆÞ¦È¬ëÙ£ÖÓÚåÛÑ¢ÕÓ¨ÍÕÄ¦í"
+key = "picoctf"
+decrypted = ""
+
+for i in range(len(encrypted)):
+    e = ord(encrypted[i])
+    k = ord(key[i % len(key)])
+    decrypted += chr((e - k + 256) % 256)
+
+print(decrypted)
+```
+
+
+## Local Authority
+
+First entering random values for username and password and clicking on submit gives us `Login Failed`. Now inspecting the page gives us that it is checking the `secure.js` file. 
+On curling the `secure.js`
+
+```
+curl http://saturn.picoctf.net:57430/secure.js
+```
+
+We get the username and password
+
+Entering the username and password gives us the flag.
+
+
 ## 
