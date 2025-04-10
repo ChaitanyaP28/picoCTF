@@ -1215,4 +1215,24 @@ On analysing we get the 3 parts of the flag encoded in base64
 ![alt text](/Pictures/EventViewing4.png)
 
 
+## No Sql Injection
+NoSqlInjection
+
+using cat on the files for `pico` gives us:
+![alt text](/Pictures/NoSqlInjection.png)
+
+Username: `picoplayer355@picoctf.org`
+
+For the password we can give 
+
+Password: `{"$ne":null}`
+
+This gives us the admin panel
+
+Once in admin page run on the console
+```
+sessionStorage.getItem('token')
+```
+
+
 ## 
