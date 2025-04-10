@@ -1160,4 +1160,59 @@ sendMessage("eval -100000");
 ```
 
 
+## Event-Viewing
+
+First using Windows Event viewer we get and sorting by event id:
+
+There are couple of warnings and below that is what has got installed.
+
+On seeing there is one installer which says `Totally_Legit_Software` which is suscipious
+
+
+![alt text](/Pictures/EventViewing1.png)
+
+Now using python
+```
+from Evtx.Evtx import Evtx
+
+def evtx_file(file_path):
+    xml_records = []
+    try:
+        with Evtx(file_path) as log:
+            for record in log.records():
+                xml_records.append(record.xml())
+    except FileNotFoundError:
+        print("Error: File not found. Please check the file path and try again.")
+    except Exception as e:
+        print(f"An error occurred: {e}")
+    return xml_records
+
+if __name__ == "__main__":
+    file_path = input("EVTX file: ").strip()
+    records = evtx_file(file_path)
+    for rec in records:
+        print(rec)
+```
+
+Running this to save the output to a text file:
+```
+python3 1.py >out.txt
+```
+
+Give input as
+```
+Windows_Logs.evtx
+```
+
+We get,
+
+On analysing we get the 3 parts of the flag encoded in base64
+
+![alt text](/Pictures/EventViewing2.png)
+
+![alt text](/Pictures/EventViewing3.png)
+
+![alt text](/Pictures/EventViewing4.png)
+
+
 ## 
