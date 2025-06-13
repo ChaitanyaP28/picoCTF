@@ -1235,4 +1235,31 @@ sessionStorage.getItem('token')
 ```
 
 
+## FindAndOpen
+
+On seeing the wireshark outputs have a closer look on Packet 48
+
+![alt text](/Pictures/FindAndOpen1.png)
+
+Exclude the Header and copy the text
+
+Cipher Detector says its `BASE 64`
+
+Decoding with Base 64 gives us the Partial Flag
+
+![alt text](/Pictures/FindAndOpen2.png)
+
+Using this partial flag to Open the Zip file Reads the Entire flag.
+
+
+## DISKO 1
+
+First Extract the `.gz` file. Then Using 
+```bash
+strings disko-1.dd | grep "pico"
+```
+
+We get the flag
+
+
 ## 
