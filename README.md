@@ -2317,3 +2317,102 @@ This would redirect execution to the `win()` function.
 Finally we get the flag after answering all questions.
 
 
+## Password Profiler
+The challenge provides:
+
+```
+Name: Alice Johnson
+Nickname: AJ
+Partner: Bob
+Child: Charlie
+Birthdate: 15-07-1990
+```
+
+Password Hash
+```
+968c2349040273dd57dc4be7e238c5ac200ceac5
+```
+
+The provided script reads a wordlist (`passwords.txt`), hashes every candidate using SHA-1, and compares it against the target hash.
+
+Therefore, the intended solution is to generate a custom wordlist based on the victim's personal information.
+
+
+## Using CUPP
+CUPP (Common User Passwords Profiler) is a tool that generates targeted password lists using personal information.
+
+- CUPP (Common User Passwords Profiler): https://github.com/Mebus/cupp
+
+Run:
+```bash
+python3 cupp.py -i
+```
+
+Enter the information from `userinfo.txt`:
+```text
+ ___________
+   cupp.py!                 # Common
+      \                     # User
+       \   ,__,             # Passwords
+        \  (oo)____         # Profiler
+           (__)    )\
+              ||--|| *      [ Muris Kurgas | j0rgan@remote-exploit.org ]
+                            [ Mebus | https://github.com/Mebus/]
+
+
+[+] Insert the information about the victim to make a dictionary
+[+] If you don't know all the info, just hit enter when asked! ;)
+
+> First Name: Alice
+> Surname: Johnson
+> Nickname: AJ
+> Birthdate (DDMMYYYY): 15071990
+
+
+> Partners) name: Bob
+> Partners) nickname:
+> Partners) birthdate (DDMMYYYY):
+
+
+> Child's name: Charlie
+> Child's nickname:
+> Child's birthdate (DDMMYYYY):
+
+
+> Pet's name:
+> Company name:
+
+
+> Do you want to add some key words about the victim? Y/[N]:
+> Do you want to add special chars at the end of words? Y/[N]:
+> Do you want to add some random numbers at the end of words? Y/[N]:
+> Leet mode? (i.e. leet = 1337) Y/[N]:
+
+[+] Now making a dictionary...
+[+] Sorting list and removing duplicates...
+[+] Saving dictionary to alice.txt, counting 5180 words.
+> Hyperspeed Print? (Y/n) :
+[+] Now load your pistolero with alice.txt and shoot! Good luck!
+```
+
+CUPP generates a large password dictionary containing combinations such as:
+```text
+Alice1990
+AJ1990
+Aj_15901990
+AliceAj1990
+Johnson1990
+...
+```
+
+The generated wordlist contained the candidate:
+```text
+Aj_15901990
+```
+
+Now running `check_password.py` with the password list
+
+```bash
+python3 check_password.py
+```
+Gives the flag
