@@ -2418,7 +2418,7 @@ python3 check_password.py
 Gives the flag
 
 
-# Crack the Gate 1
+## Crack the Gate 1
 Opening the page source of the wabpage login page (`Ctrl + U`) reveals.
 
 ```html
@@ -2450,3 +2450,91 @@ curl -X POST "http://amiable-citadel.picoctf.net:57474/login" \
 This gives us the flag.
 
 
+## Log Hunt
+
+We have a log file, running `cat` on it gives us a lot of system logs.
+
+Running cat with grep `pico`
+```bash
+cat server.log | grep "pico"
+```
+![LogHunt](Pictures/LogHunt1.png)
+
+Shows some output where part of the flag exists and its under `INFO FLAGPART`
+
+Now using grep with `FLAGPART`
+```bash
+cat server.log | grep FLAGPART
+```
+![LogHunt](Pictures/LogHunt2.png)
+
+Merging all the four parts of the flag into one gives us the flag.
+
+
+## MultiCode
+The contents of `message.txt` are:
+```text
+NjM3NjcwNjI1MDQ3NTMyNTM3NDI2MTcyNjY2NzcyNzE1ZjcyNjE3MDMwNzE3NjYxNzQ1ZjczMzM2ZTMyMzQ3MzM3MzMyNTM3NDQ=
+```
+
+This resembles a Base64-encoded string.
+
+**Base64**
+
+Decode the message using Base64:
+
+```bash
+echo "NjM3NjcwNjI1MDQ3NTMyNTM3NDI2MTcyNjY2NzcyNzE1ZjcyNjE3MDMwNzE3NjYxNzQ1ZjczMzM2ZTMyMzQ3MzM3MzMyNTM3NDQ=" | base64 -d
+```
+
+Output:
+```text
+637670625047532537426172666772715f72617030717661745f73336e3234733733253744
+```
+
+The output is a hexadecimal string.
+
+**Hex**
+
+Convert the hexadecimal string back to ASCII.
+```bash
+echo "637670625047532537426172666772715f72617030717661745f73336e3234733733253744" | xxd -r -p
+```
+
+Output:
+```text
+cvpbPGS%7Barfgrq_rap0qvat_s3n24s73%7D
+```
+
+The `%7B` and `%7D` indicate URL encoding.
+
+
+**URL Encoding**
+
+Decode the URL-encoded characters.
+
+Using Python:
+```bash
+python3 -c 'import urllib.parse; print(urllib.parse.unquote("cvpbPGS%7Barfgrq_rap0qvat_s3n24s73%7D"))'
+```
+
+Output:
+```text
+cvpbPGS{arfgrq_rap0qvat_s3n24s73}
+```
+
+The text resembles a ROT13-encoded string.
+
+**ROT13**
+
+Decode the final layer using ROT13.
+
+```bash
+python3 -c 'import codecs; print(codecs.decode("cvpbPGS{arfgrq_rap0qvat_s3n24s73}", "rot_13"))'
+```
+
+Output:
+```text
+picoCTF{nested_enc0ding_f3a24f73}
+```
+Finally we get the flag.
