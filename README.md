@@ -2538,3 +2538,168 @@ Output:
 picoCTF{nested_enc0ding_f3a24f73}
 ```
 Finally we get the flag.
+
+
+## Blast from the past
+Target timestamp:
+```
+1970:01:01 00:00:00.001+00:00
+```
+
+Inspect all metadata using ExifTool:
+
+```bash
+exiftool original.jpg
+```
+
+Relevant timestamps:
+```
+Modify Date
+Date/Time Original
+Create Date
+Sub Sec Time
+Sub Sec Time Original
+Sub Sec Time Digitized
+Time Stamp
+```
+
+To view every timestamp along with its metadata group:
+```bash
+exiftool -a -G1 -s original.jpg | grep -Ei "time|date"
+```
+
+Output:
+```
+[IFD0]      ModifyDate
+[ExifIFD]   DateTimeOriginal
+[ExifIFD]   CreateDate
+[ExifIFD]   SubSecTime
+[ExifIFD]   SubSecTimeOriginal
+[ExifIFD]   SubSecTimeDigitized
+[Samsung]   TimeStamp
+```
+
+Create a copy of the original image.
+```bash
+cp original.jpg tmp.jpg
+```
+
+Modify Standard EXIF Timestamps
+
+```bash
+exiftool -overwrite_original \
+'-ModifyDate=1970:01:01 00:00:00' \
+'-DateTimeOriginal=1970:01:01 00:00:00' \
+'-CreateDate=1970:01:01 00:00:00' \
+'-SubSecTime=001' \
+'-SubSecTimeOriginal=001' \
+'-SubSecTimeDigitized=001' \
+tmp.jpg
+```
+
+Verify:
+```bash
+exiftool tmp.jpg | grep -E "Date|Time|Sub Sec"
+```
+
+The checker now accepted the first six timestamps.
+
+
+The checker still failed on:
+```
+Samsung: TimeStamp
+```
+
+ExifTool reported:
+```
+Time Stamp : 2023:11:21 02:16:21.420+05:30
+```
+
+Attempting to modify it directly failed:
+
+```bash
+exiftool \
+'-Samsung:TimeStamp=1970:01:01 00:00:00.001+00:00' \
+tmp.jpg
+```
+
+Output:
+```
+Warning: Samsung:TimeStamp doesn't exist or isn't writable
+```
+
+Generate a verbose dump:
+```bash
+exiftool -v3 tmp.jpg > verbose.txt
+```
+
+Locate the Samsung timestamp:
+```bash
+grep -A20 -B20 "TimeStamp" verbose.txt
+```
+
+Relevant output:
+```
+Samsung trailer
+
+Image_UTC_Data1700513181420
+
+TimeStamp = 1700513181420
+```
+
+The timestamp was stored as a Unix timestamp in milliseconds inside Samsung's proprietary trailer.
+
+Hex location:
+```
+Offset: 0x2b82c4
+```
+
+Stored value:
+```
+1700513181420
+```
+
+Unix epoch with 1 ms is:
+```
+1
+```
+
+Since the trailer stores a fixed-length ASCII string, replace
+
+```
+1700513181420
+```
+
+with
+```
+0000000000001
+```
+
+using:
+```bash
+printf "0000000000001" | dd of=tmp.jpg bs=1 seek=$((0x2b82c4)) conv=notrunc
+```
+
+
+Run the checker:
+```bash
+nc mimas.picoctf.net 56727 < tmp.jpg
+```
+
+Output:
+
+```
+Checking tag 1/7
+Great job!
+
+...
+
+Checking tag 7/7
+Found: 1970:01:01 00:00:00.001+00:00
+Great job!
+
+You did it!
+```
+Below we get the flag.
+
+
