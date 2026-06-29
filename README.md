@@ -2875,3 +2875,78 @@ Finally we get the flag
 ![alt text](Pictures/PerceptronTrainXOR.png)
 
 
+## Perceptron Train XNOR
+
+This challenge demonstrates how a **single-layer perceptron** learns using the classic perceptron learning rule on the **XNOR** dataset.
+
+The objective is to tune the learning rate and train the perceptron until it reaches **75% accuracy**, which is the maximum possible accuracy for a single perceptron on XNOR data.
+
+Challenge URL:
+```text
+http://aureolin-pixie.cylabacademy.net:53956/
+```
+
+The XNOR truth table is:
+| x₁ | x₂ | Target |
+| -- | -- | ------ |
+| 0  | 0  | 1      |
+| 0  | 1  | 0      |
+| 1  | 0  | 0      |
+| 1  | 1  | 1      |
+
+Unlike datasets such as AND or OR, **XNOR is not linearly separable**.
+
+A single perceptron can only learn a **linear decision boundary**, so it is impossible for it to correctly classify all four XNOR samples.
+
+Therefore,
+
+* Maximum possible accuracy = **75%**
+* Perfect accuracy (100%) is impossible using a single-layer perceptron.
+
+
+Open the challenge webpage.
+
+Set the learning rate to:
+```text
+0.02
+```
+
+Click:
+```text
+Run training
+```
+
+The perceptron performs up to **16 updates** using the classic perceptron update rule.
+
+The training converges with:
+```text
+Final accuracy: 75%
+```
+
+which satisfies the challenge requirement.
+
+
+Final parameters:
+```text
+w1 = 0.96
+w2 = 0.96
+b  = -0.02
+```
+
+Training log:
+| Step | Sample      | Prediction | Error | w₁   | w₂   | b     | Accuracy |
+| ---- | ----------- | ---------- | ----- | ---- | ---- | ----- | -------- |
+| 1    | (-2,-2) → 1 | 0          | 1     | 0.96 | 0.96 | 0.02  | 25%      |
+| 2    | (2,2) → 1   | 1          | 0     | 0.96 | 0.96 | 0.02  | 25%      |
+| 3    | (-2,2) → 0  | 1          | -1    | 1.00 | 0.92 | 0.00  | 50%      |
+| 4    | (2,-2) → 0  | 1          | -1    | 0.96 | 0.96 | -0.02 | 75%      |
+
+The resulting decision boundary correctly classifies **3 out of 4** samples.
+
+A perceptron creates only a **single straight-line decision boundary**.
+
+The XNOR dataset requires **multiple decision boundaries** (or a hidden layer), making it impossible for a single perceptron to achieve 100% accuracy.
+
+This challenge demonstrates one of the key motivations behind **multi-layer neural networks**, which can successfully learn non-linearly separable problems such as XOR and XNOR.
+
+Finally we get the flag
