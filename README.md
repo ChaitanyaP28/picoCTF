@@ -2703,3 +2703,175 @@ You did it!
 Below we get the flag.
 
 
+## Trust But Verify
+
+Connect to the challenge:
+```bash
+nc aureolin-pixie.cylabacademy.net 63892
+```
+
+The story follows a student named **Ren**, assisted by an AI companion called **ARIA**. Throughout the story, ARIA provides statistics, code, and citations, and the player must decide whether to trust or verify the information.
+
+ARIA provides the following statistic:
+> "Every year, over 500 million metric tons of plastic enter the world's oceans."
+
+Options:
+```
+A) Type it directly into the proposal
+B) Ask ARIA for the exact source
+C) Look it up independently
+```
+
+Correct Choice
+```
+B
+```
+
+ARIA admits that it generated a plausible-looking citation that doesn't actually exist. This demonstrates that AI models can hallucinate sources and statistics.
+
+ARIA generates Python code:
+```python
+data  = [8, 9, 10, 11, 13, 14]
+years = [2017, 2018, 2019, 2020, 2021, 2022]
+
+average = sum(data) / len(years) + 1
+print(f"Average annual input: {average:.2f} million metric tons")
+```
+
+Options:
+```
+A) Run it immediately
+B) Read through it carefully
+```
+
+Correct Choice
+
+```
+B
+```
+
+Upon inspection, the unnecessary `+ 1` is discovered.
+
+Correct code:
+```python
+average = sum(data) / len(years)
+```
+
+This illustrates that AI-generated code should always be reviewed before execution.
+
+
+ARIA claims:
+> "Microplastics have now been detected in human blood..."
+
+and cites:
+* Dr. Heather Leslie
+* Vrije Universiteit Amsterdam
+* Year: 2021
+
+Options:
+```
+A) Use it immediately
+B) Verify it
+```
+
+Correct Choice
+```
+B
+```
+
+Verification reveals:
+* Researcher: Correct
+* University: Correct
+* Publication: Real
+* Publication Year: **2022**, not 2021
+* The findings are **preliminary**, not definitive
+
+Even when AI is mostly correct, small factual errors can still exist.
+
+
+At the end of the story, ARIA reveals the flag:
+
+
+## Perceptron Train XOR
+
+This challenge demonstrates how a **single-layer perceptron** learns using the classic perceptron learning rule on the XOR dataset.
+
+The objective is to tune the learning rate and train the perceptron until it reaches **75% accuracy**, which is the maximum possible accuracy for a single perceptron on XOR data.
+
+Challenge URL:
+
+```text
+http://aureolin-pixie.cylabacademy.net:50042/
+```
+
+The XOR truth table is:
+
+| x₁ | x₂ | Target |
+| -- | -- | ------ |
+| 0  | 0  | 0      |
+| 0  | 1  | 1      |
+| 1  | 0  | 1      |
+| 1  | 1  | 0      |
+
+Unlike datasets such as AND or OR, XOR is **not linearly separable**.
+
+A single perceptron can only learn a **linear decision boundary**, so it is impossible for it to correctly classify all four XOR samples.
+
+Therefore,
+
+* Maximum possible accuracy = **75%**
+* Perfect accuracy (100%) is impossible using a single-layer perceptron.
+
+
+
+Open the challenge webpage.
+
+Set the learning rate to:
+
+```text
+0.02
+```
+
+Click:
+
+```
+Run training
+```
+
+The perceptron performs up to **16 updates** using the classic perceptron update rule.
+
+The training converges with:
+
+```
+Final accuracy: 75%
+```
+
+which satisfies the challenge requirement.
+
+Final parameters:
+```text
+w1 = 1.00
+w2 = -1.00
+b  = -0.04
+```
+
+Training log:
+| Step | Sample      | Prediction | Error | w₁   | w₂    | b     | Accuracy |
+| ---- | ----------- | ---------- | ----- | ---- | ----- | ----- | -------- |
+| 1    | (-2,-2) → 0 | 1          | -1    | 1.04 | -0.96 | -0.02 | 50%      |
+| 2    | (2,2) → 0   | 1          | -1    | 1.00 | -1.00 | -0.04 | 75%      |
+
+The resulting decision boundary correctly classifies **3 out of 4** samples.
+
+A perceptron creates only a **single straight-line decision boundary**.
+
+The XOR dataset requires **multiple decision boundaries** (or a hidden layer), making it impossible for a single perceptron to achieve 100% accuracy.
+
+This challenge illustrates one of the fundamental limitations that motivated the development of **multi-layer neural networks**.
+
+
+Finally we get the flag
+
+![alt text](Pictures/PerceptronTrainXOR.png)
+
+
