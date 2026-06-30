@@ -2949,4 +2949,175 @@ The XNOR dataset requires **multiple decision boundaries** (or a hidden layer), 
 
 This challenge demonstrates one of the key motivations behind **multi-layer neural networks**, which can successfully learn non-linearly separable problems such as XOR and XNOR.
 
+![alt text](Pictures/PerceptronTrainXNOR.png)
+
 Finally we get the flag
+
+
+## Perceptron Train Hole in Middle
+
+This challenge demonstrates the limitations of a **single-layer perceptron** on a dataset where a single negative point is surrounded by positive points, commonly called the **"Hole in the Middle"** problem.
+
+The goal is to train the perceptron until it reaches the maximum possible accuracy of **88.9%**, demonstrating that a single linear classifier cannot perfectly separate this dataset.
+
+Challenge URL:
+```text
+http://aureolin-pixie.cylabacademy.net:50233/
+```
+
+The dataset consists of **9 points**:
+* **8 positive points** forming a ring around the outside.
+* **1 negative point** located at the center.
+
+Visually:
+```text
+      ●   ●   ●
+
+      ●   ○   ●
+
+      ●   ●   ●
+```
+
+Where:
+* **● = Positive (+1)**
+* **○ = Negative (-1)**
+
+A single-layer perceptron learns only a **linear decision boundary** (a straight line).
+
+Since the negative point is completely surrounded by positive points, **no straight line can separate it from all surrounding points**.
+
+Therefore:
+* Maximum possible accuracy = **8 / 9 = 88.9%**
+* Perfect accuracy (100%) is impossible.
+
+Open the challenge webpage.
+Set the learning rate to:
+```text
+5.00
+```
+
+Click:
+```text
+Run training
+```
+
+The perceptron performs up to **16 updates** using the classic perceptron learning rule.
+
+Training eventually converges with:
+```text
+Final accuracy: 88.9%
+```
+
+which satisfies the challenge requirement and reveals the flag.
+
+
+Final parameters:
+```text
+w1 = -4.00
+w2 = 4.00
+b  = 20.00
+```
+
+Final accuracy:
+```text
+88.9%
+```
+
+Only the center point remains misclassified, while the remaining **8 points** are classified correctly.
+
+A perceptron can only learn a **single straight-line decision boundary**.
+
+The "Hole in the Middle" dataset requires a **closed boundary** surrounding the center point.
+
+Since a line cannot form a closed region, a single perceptron can never perfectly classify this dataset.
+
+This illustrates why more advanced models, such as **multi-layer perceptrons (MLPs)** and other neural networks with hidden layers, are required to solve non-linearly separable problems.
+
+Finally we get the flag.
+
+![alt text](Pictures/PerceptronTrainHoleinMiddle.png)
+
+
+## Perceptron Train Classic 2 Alpha
+
+This challenge demonstrates how a **single-layer perceptron** learns using the classic perceptron update rule.
+
+Unlike the previous XOR/XNOR challenges, the dataset in this challenge **is linearly separable**, meaning a perceptron can eventually learn a perfect decision boundary.
+
+The objective is to discover **five different learning rates** that successfully train the perceptron to **100% accuracy**. Once five successful learning rates are found, the flag is revealed.
+
+Challenge URL:
+```text
+http://aureolin-pixie.cylabacademy.net:49511/
+```
+
+A perceptron updates its weights only when it misclassifies a training sample.
+
+The update rule is:
+```text
+w = w + η · error · x
+b = b + η · error
+```
+
+where:
+* **η** = learning rate
+* **w** = weight vector
+* **b** = bias
+
+Since the dataset is **linearly separable**, the Perceptron Convergence Theorem guarantees that training will eventually converge for suitable learning rates.
+
+Open the challenge webpage.
+Test different learning rates until five successful runs are recorded.
+The following learning rates successfully reached **100% accuracy**:
+```text
+1.0
+1.5
+2.0
+2.5
+3.0
+```
+
+For each successful run:
+1. Set the learning rate.
+2. Click **Run training**.
+3. Wait until training completes with **100% accuracy**.
+4. Repeat until all five successful learning rates are recorded.
+
+Once all five successful runs are completed, the webpage unlocks the flag.
+
+Final learning rate shown:
+
+```text
+1.5
+```
+
+Final parameters after convergence:
+
+```text
+w1 = 5.50
+w2 = 6.50
+b  = -1.50
+```
+
+Final accuracy:
+```text
+100%
+```
+
+Unlike XOR, XNOR, and the "Hole in the Middle" dataset, this dataset **is linearly separable**.
+
+Therefore, a single straight-line decision boundary is sufficient to separate the two classes.
+
+The learning rate only affects:
+
+* how quickly the perceptron converges,
+* the path taken during optimization,
+* and the final weight values.
+
+It does **not** prevent convergence as long as the learning rate is suitable.
+
+After finding all **five successful learning rates**, the challenge reveals the flag.
+
+So we get the flag.
+
+![alt text](Pictures/PerceptronTrainClassic2Alpha.png)
